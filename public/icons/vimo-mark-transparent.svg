@@ -1,0 +1,24 @@
+<svg width="220" height="120" viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#glow)">
+    <path d="M20 21H54C63 21 71 25 76 32L108 75L140 32C145 25 153 21 162 21H200C209 21 216 28 216 37V88C216 97 209 104 200 104H183C174 104 167 97 167 88V59L132 99C126 106 114 106 108 98L73 53L91 92C95 101 88 111 78 111H48C40 111 33 106 30 99L7 40C3 30 10 21 20 21Z" fill="url(#markGradient)"/>
+    <path d="M20 21H54C63 21 71 25 76 32L108 75L140 32C145 25 153 21 162 21H200C209 21 216 28 216 37V88C216 97 209 104 200 104H183C174 104 167 97 167 88V59L132 99C126 106 114 106 108 98L73 53L91 92C95 101 88 111 78 111H48C40 111 33 106 30 99L7 40C3 30 10 21 20 21Z" stroke="url(#edgeGradient)" stroke-width="1.6"/>
+  </g>
+  <defs>
+    <linearGradient id="markGradient" x1="5" y1="66" x2="216" y2="66" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#16C7F6"/>
+      <stop offset="0.36" stop-color="#1778FF"/>
+      <stop offset="0.68" stop-color="#7559FF"/>
+      <stop offset="1" stop-color="#F24CD2"/>
+    </linearGradient>
+    <linearGradient id="edgeGradient" x1="17" y1="21" x2="208" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00B7FF"/>
+      <stop offset="0.5" stop-color="#3156F8"/>
+      <stop offset="1" stop-color="#E33FD2"/>
+    </linearGradient>
+    <filter id="glow" x="-28" y="-18" width="272" height="168" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="13" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.46 0 0 0 0 1 0 0 0 0.72 0"/>
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
+  </defs>
+</svg>
