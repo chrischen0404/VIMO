@@ -43,6 +43,36 @@ export default {
         motion: {
           500: '#006DF0',
           600: '#075CC6'
+        },
+        macaron: {
+          base: '#FAF8F4'
+        },
+        mint: {
+          50: '#ECFBF6',
+          100: '#D6F7ED',
+          200: '#B7F0DF',
+          400: '#42D9BE',
+          500: '#0DBFA3',
+          600: '#07937E',
+          700: '#0A6F61'
+        },
+        coral: {
+          50: '#FFF0ED',
+          100: '#FFE1DA',
+          200: '#FFC3B8',
+          400: '#FF8B7D',
+          500: '#F56B5D',
+          600: '#D74D43',
+          700: '#A43B35'
+        },
+        lilac: {
+          50: '#F6F1FF',
+          100: '#EDE4FF',
+          200: '#DCCBFF',
+          400: '#BDA1FF',
+          500: '#9C7BF2',
+          600: '#7B5AD4',
+          700: '#6248A7'
         }
       },
       boxShadow: {
