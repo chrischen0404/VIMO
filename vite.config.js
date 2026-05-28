@@ -15,6 +15,7 @@ export default defineConfig({
         'manifest.webmanifest',
         'icons/vimo-icon.svg',
         'icons/vimo-logo.svg',
+        'icons/vimo-header-logo.svg',
         'icons/vimo-mark-transparent.svg',
         'icons/icon-192.png',
         'icons/icon-512.png',
