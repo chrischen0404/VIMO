@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0F2A43" />
+    <meta name="description" content="VIMO 願動，把運動願望推進成下一場行動。" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:site_name" content="VIMO 願動" />
+    <meta property="og:title" content="VIMO 願動｜Turn Your Wish Into Motion" />
+    <meta property="og:description" content="把想運動、想學習、想揪團、想辦活動的願望聚集起來，透過熱度累積與供給媒合，讓活動真正成局。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/icons/icon-512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VIMO 願動｜Turn Your Wish Into Motion" />
+    <meta name="twitter:description" content="Vow Into Motion，把願望推進成行動。" />
+    <meta name="twitter:image" content="/icons/icon-512.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/vimo-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <title>VIMO 願動｜Vow Into Motion</title>
+  </head>
+  <body>
+    <form name="vimo-wish" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="city" />
+      <input type="text" name="wishType" />
+      <input type="text" name="sport" />
+      <textarea name="wish"></textarea>
+      <input type="text" name="contactPreference" />
+    </form>
+    <form name="vimo-provider" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="company" />
+      <input type="text" name="role" />
+      <input type="text" name="serviceType" />
+      <input type="email" name="email" />
+      <input type="text" name="city" />
+      <textarea name="message"></textarea>
+    </form>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
