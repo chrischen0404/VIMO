@@ -23,6 +23,9 @@ export default defineConfig({
       ],
       manifest: false,
       workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webmanifest}'],
         navigateFallback: '/offline.html',
         runtimeCaching: [
