@@ -27,16 +27,8 @@ export default defineConfig({
         skipWaiting: true,
         cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webmanifest}'],
-        navigateFallback: '/offline.html',
+        navigateFallback: '/index.html',
         runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.mode === 'navigate',
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'vimo-pages',
-              networkTimeoutSeconds: 3
-            }
-          },
           {
             urlPattern: ({ request }) => ['script', 'style', 'worker'].includes(request.destination),
             handler: 'StaleWhileRevalidate',
