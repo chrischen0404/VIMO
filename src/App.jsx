@@ -145,12 +145,8 @@ function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/80 bg-white/75 backdrop-blur-2xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <a href="#top" className="flex items-center gap-3" aria-label="VIMO 願動首頁">
-          <img className="h-10 w-10 rounded-2xl shadow-glow" src="/icons/vimo-icon.svg" alt="" />
-          <div className="leading-tight">
-            <p className="text-[15px] font-semibold tracking-[0.16em] text-ink-700">VIMO</p>
-            <p className="text-xs font-medium text-ink-400">願動</p>
-          </div>
+        <a href="#top" className="flex items-center" aria-label="VIMO 願動首頁">
+          <img className="h-10 w-[112px] object-contain" src="/icons/vimo-logo.svg" alt="VIMO 願動" />
         </a>
         <nav className="hidden items-center gap-7 text-sm font-medium text-ink-500 md:flex">
           <a href="#roles">角色入口</a>

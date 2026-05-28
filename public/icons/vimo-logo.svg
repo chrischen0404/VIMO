@@ -1,0 +1,30 @@
+<svg width="320" height="120" viewBox="0 0 320 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#logoGlow)">
+    <path d="M35 19H68C74 19 79 22 83 27L123 76L163 27C167 22 172 19 178 19H210C217 19 223 25 223 32V91C223 98 217 104 210 104H196C189 104 183 98 183 91V56L145 99C139 106 128 106 122 99L84 52L105 93C109 101 103 110 95 110H66C60 110 55 107 53 102L23 38C18 29 25 19 35 19Z" fill="url(#logoGradient)"/>
+    <path d="M35 19H68C74 19 79 22 83 27L123 76L163 27C167 22 172 19 178 19H210C217 19 223 25 223 32V91C223 98 217 104 210 104H196C189 104 183 98 183 91V56L145 99C139 106 128 106 122 99L84 52L105 93C109 101 103 110 95 110H66C60 110 55 107 53 102L23 38C18 29 25 19 35 19Z" stroke="url(#logoEdge)" stroke-width="1.4"/>
+  </g>
+  <text x="238" y="78" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800" letter-spacing="4" fill="url(#wordGradient)" stroke="#245EBD" stroke-width="0.5">VIMO</text>
+  <defs>
+    <linearGradient id="logoGradient" x1="20" y1="64" x2="224" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10C7F7"/>
+      <stop offset="0.36" stop-color="#1777FF"/>
+      <stop offset="0.68" stop-color="#705BFF"/>
+      <stop offset="1" stop-color="#F34ED2"/>
+    </linearGradient>
+    <linearGradient id="logoEdge" x1="31" y1="19" x2="218" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00B7FF"/>
+      <stop offset="0.5" stop-color="#3156F8"/>
+      <stop offset="1" stop-color="#E33FD2"/>
+    </linearGradient>
+    <linearGradient id="wordGradient" x1="235" y1="64" x2="318" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#089FEA"/>
+      <stop offset="0.55" stop-color="#4165F4"/>
+      <stop offset="1" stop-color="#BD57E8"/>
+    </linearGradient>
+    <filter id="logoGlow" x="-16" y="-18" width="278" height="166" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.46 0 0 0 0 1 0 0 0 0.75 0"/>
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
+  </defs>
+</svg>

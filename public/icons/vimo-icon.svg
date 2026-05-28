@@ -1,21 +1,43 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <path d="M112 151L204 344L296 151" stroke="url(#v)" stroke-width="54" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M303 341V213L365 295L430 213V341" stroke="url(#m)" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="362" cy="295" r="17" fill="#F6C94B"/>
+  <rect width="512" height="512" rx="112" fill="url(#iconBg)"/>
+  <g filter="url(#softGlow)">
+    <path d="M111 169H168C178 169 187 174 193 182L257 268L321 182C327 174 336 169 346 169H401C413 169 423 179 423 191V316C423 328 413 338 401 338H375C363 338 353 328 353 316V237L288 319C279 330 262 330 253 318L187 230L225 318C231 331 221 346 207 346H158C149 346 141 341 137 333L91 202C84 186 96 169 111 169Z" fill="url(#markGradient)"/>
+    <path d="M111 169H168C178 169 187 174 193 182L257 268L321 182C327 174 336 169 346 169H401C413 169 423 179 423 191V316C423 328 413 338 401 338H375C363 338 353 328 353 316V237L288 319C279 330 262 330 253 318L187 230L225 318C231 331 221 346 207 346H158C149 346 141 341 137 333L91 202C84 186 96 169 111 169Z" stroke="url(#edgeGradient)" stroke-width="2.5"/>
+  </g>
+  <g filter="url(#textGlow)">
+    <text x="256" y="424" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="68" font-weight="800" letter-spacing="7" fill="url(#textGradient)" stroke="#245EBD" stroke-width="1.2">VIMO</text>
+  </g>
   <defs>
-    <linearGradient id="bg" x1="80" y1="32" x2="438" y2="481" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F8FBFF"/>
-      <stop offset="0.55" stop-color="#EEF7FF"/>
-      <stop offset="1" stop-color="#E8F8F4"/>
+    <radialGradient id="iconBg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 256) rotate(90) scale(330)">
+      <stop offset="0" stop-color="#EEF5FA"/>
+      <stop offset="0.58" stop-color="#C5C9CC"/>
+      <stop offset="1" stop-color="#8B8F91"/>
+    </radialGradient>
+    <linearGradient id="markGradient" x1="83" y1="255" x2="424" y2="255" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10C7F7"/>
+      <stop offset="0.36" stop-color="#1777FF"/>
+      <stop offset="0.68" stop-color="#705BFF"/>
+      <stop offset="1" stop-color="#F34ED2"/>
     </linearGradient>
-    <linearGradient id="v" x1="112" y1="151" x2="290" y2="350" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#19B8FF"/>
-      <stop offset="1" stop-color="#1463F3"/>
+    <linearGradient id="edgeGradient" x1="101" y1="169" x2="415" y2="342" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00B7FF"/>
+      <stop offset="0.5" stop-color="#3156F8"/>
+      <stop offset="1" stop-color="#E33FD2"/>
     </linearGradient>
-    <linearGradient id="m" x1="303" y1="213" x2="442" y2="342" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0CB9CE"/>
-      <stop offset="1" stop-color="#15D29A"/>
+    <linearGradient id="textGradient" x1="147" y1="397" x2="365" y2="397" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#089FEA"/>
+      <stop offset="0.55" stop-color="#4165F4"/>
+      <stop offset="1" stop-color="#BD57E8"/>
     </linearGradient>
+    <filter id="softGlow" x="38" y="118" width="434" height="280" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.46 0 0 0 0 1 0 0 0 0.9 0"/>
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
+    <filter id="textGlow" x="116" y="346" width="280" height="105" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.18 0 0 0 0 0.36 0 0 0 0 1 0 0 0 0.55 0"/>
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
   </defs>
 </svg>
