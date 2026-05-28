@@ -1,428 +1,437 @@
+import { useMemo, useState } from 'react';
 import {
+  Activity,
   ArrowRight,
+  BadgeCheck,
+  BarChart3,
+  Bell,
   Building2,
   CalendarDays,
   CheckCircle2,
-  CircleDollarSign,
+  ClipboardList,
+  CreditCard,
+  Database,
+  Download,
   Dumbbell,
-  Eye,
-  Flame,
-  Handshake,
+  FileCheck2,
+  HeartPulse,
+  Home,
+  Landmark,
+  LineChart,
   MapPin,
-  Medal,
+  MessageCircle,
+  ReceiptText,
+  RotateCw,
   Send,
   ShieldCheck,
+  Smartphone,
   Sparkles,
+  Star,
+  Trophy,
   Users,
-  Waves
+  WalletCards,
+  Watch
 } from 'lucide-react';
 
-const roles = [
-  { title: '許願者', desc: '提出想運動、想學習、想揪團、想辦活動的需求。', icon: Sparkles, color: 'from-ice-100 to-lilac-100' },
-  { title: '主辦方', desc: '從熱度池找到值得啟動的活動機會。', icon: CalendarDays, color: 'from-gold-100 to-coral-100' },
-  { title: '場地方', desc: '用空檔時段承接已被驗證的在地需求。', icon: Building2, color: 'from-mint-100 to-ice-100' },
-  { title: '周邊廠商', desc: '在活動形成前理解族群、場景與購買意圖。', icon: CircleDollarSign, color: 'from-coral-100 to-gold-100' },
-  { title: '裁判', desc: '接住賽事願望，讓比賽更容易正式成局。', icon: ShieldCheck, color: 'from-lilac-100 to-white' },
-  { title: '教練', desc: '把學習需求變成可報名、可追蹤的課程。', icon: Medal, color: 'from-mint-100 to-white' },
-  { title: '接願者', desc: '整合供給、設計方案，將願望推進成行動。', icon: Handshake, color: 'from-ice-100 to-mint-100' },
-  { title: '看熱鬧', desc: '追蹤願望升溫、幫忙投票，觀察下一個爆點。', icon: Eye, color: 'from-lilac-100 to-coral-100' }
+const platformStats = [
+  ['本週運動願望', '128 個'],
+  ['即將成局願望', '12 個'],
+  ['教練／場館回應', '32 筆']
 ];
 
-const topWishes = [
+const wishesSeed = [
   {
-    title: '希望社區有適合長輩的防跌肌力課',
-    tag: '銀髮健康',
-    place: '北投關渡',
-    image: '/media/senior-strength.jpg',
-    imageClass: 'object-cover object-[center_35%]',
-    wishers: 768,
-    demand: 94,
-    supply: 58,
-    match: 86,
-    needs: ['教練 2 位', '白天場地', '照護協作']
+    id: 'kids-basketball',
+    title: '週六兒童籃球新手班',
+    region: '新竹市東區',
+    participants: 24,
+    threshold: 30,
+    provider: '已有 2 位教練可承接',
+    status: '即將成局',
+    revenue: '每期約 NT$18,000–36,000',
+    image: '/media/home-hero.png',
+    imageClass: 'object-cover object-center',
+    tags: ['親子', '初學友善', '週六上午']
   },
   {
-    title: '新竹初學者羽球友善賽',
-    tag: '比賽願望',
-    place: '新竹東區',
+    id: 'hsp-badminton',
+    title: '竹科企業羽球團建',
+    region: '竹科生活圈',
+    participants: 36,
+    threshold: 40,
+    provider: '3 位教練、1 間場館已回應',
+    status: '高潛力需求',
+    revenue: '單場約 NT$30,000 起',
     image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=82',
     imageClass: 'object-cover object-center',
-    wishers: 912,
-    demand: 91,
-    supply: 42,
-    match: 78,
-    needs: ['裁判 4 位', '週末場館', '賽務主辦']
+    tags: ['企業團建', '羽球', '可包場']
   },
   {
-    title: '親子週末跑跳體驗日',
-    tag: '親子活動',
-    place: '新北板橋',
-    image: '/media/home-hero.png',
-    imageClass: 'object-cover object-center',
-    wishers: 642,
-    demand: 82,
-    supply: 67,
-    match: 74,
-    needs: ['活動設計', '親子教練', '安全保險']
-  },
-  {
-    title: '公司想辦一場有參與感的運動日',
-    tag: '企業活動',
-    place: '台北內湖',
+    id: 'tennis-starter',
+    title: '網球新手體驗局',
+    region: '竹北',
+    participants: 10,
+    threshold: 10,
+    provider: '可立即開局',
+    status: '已達成局門檻',
+    revenue: '可立即開局',
     image: '/media/hero-motion.jpg',
     imageClass: 'object-cover object-center',
-    wishers: 536,
-    demand: 79,
-    supply: 68,
-    match: 73,
-    needs: ['主辦企劃', '團隊競賽', '攝影紀錄']
+    tags: ['新手', '體驗', '小班']
   },
   {
-    title: '想和毛孩一起參加戶外共跑',
-    tag: '毛孩活動',
-    place: '台中北屯',
-    image: '/media/home-hero.png',
-    imageClass: 'object-cover object-center',
-    wishers: 421,
-    demand: 77,
-    supply: 46,
-    match: 64,
-    needs: ['寵物友善', '補水點', '安全動線']
+    id: 'senior-strength',
+    title: '銀髮防跌肌力課',
+    region: '社區據點',
+    participants: 18,
+    threshold: 20,
+    provider: '1 位教練可承接，待媒合場地',
+    status: '接近成局',
+    revenue: '可發展長期課程',
+    image: '/media/senior-strength.jpg',
+    imageClass: 'object-cover object-[center_35%]',
+    tags: ['銀髮健康', '低中強度', '長期課']
   }
 ];
 
-const wishes = topWishes.slice(0, 3);
-
-const heatSegments = [
-  { label: '想參加', value: '1,284', width: '34%', color: 'bg-ice-400' },
-  { label: '想學習', value: '876', width: '24%', color: 'bg-mint-400' },
-  { label: '想揪團', value: '642', width: '18%', color: 'bg-gold-400' },
-  { label: '想辦活動', value: '512', width: '15%', color: 'bg-coral-400' }
+const supplyOpportunities = [
+  ['週六兒童籃球班', '新竹市東區', '24 / 30 人', '即將成局', '每期約 NT$18,000–36,000', '我要承接這個願望'],
+  ['竹科企業羽球團建', '竹科生活圈', '36 / 40 人', '高潛力需求', '單場約 NT$30,000 起', '提出活動方案'],
+  ['網球新手體驗局', '竹北', '10 / 10 人', '已達成局門檻', '可立即開局', '一鍵接單並發布活動'],
+  ['銀髮防跌肌力課', '社區據點', '18 / 20 人', '接近成局', '可發展長期課程', '媒合場地與教練']
 ];
 
-const flowSteps = [
-  ['許願', '用一句話說出需求，選擇地區、時段、運動項目與參與方式。'],
-  ['聚集熱度', '同區域與同興趣的人一起推高水位，需求變得可被看見。'],
-  ['供給媒合', '主辦方、場地方、教練、裁判與品牌供給進場評估。'],
-  ['活動成局', '當需求和供給到位，接願者把活動推進到報名與執行。']
+const businessCards = [
+  ['SaaS 訂閱', '教練、場館與主辦方可訂閱進階看板，查看熱門需求與潛在客源。'],
+  ['媒合手續費', '願望成功成局並完成報名交易後，平台收取媒合或交易服務費。'],
+  ['活動工具箱', '提供報名、付款、退費、通知、名單管理與評價回饋工具，降低主辦成本。']
 ];
 
-const providerOpportunities = [
-  { title: '銀髮肌力課', role: '教練 / 場地方', progress: 86, note: '需求已達啟動門檻，缺白天場地與專業教練。' },
-  { title: '初學者羽球賽', role: '主辦方 / 裁判', progress: 78, note: '參與者熱度高，供給缺口集中在賽務與裁判。' },
-  { title: '親子跑跳體驗', role: '活動方 / 保險', progress: 74, note: '家庭需求穩定，適合打包周邊與安全服務。' }
+const toolbox = [
+  [ClipboardList, '報名管理'],
+  [WalletCards, '收款與退費'],
+  [Download, '名單匯出'],
+  [Bell, '活動通知'],
+  [Star, '評價回饋'],
+  [ShieldCheck, '保險／風險提醒']
 ];
 
-const trackEvent = (eventName, payload = {}) => {
-  if (typeof window === 'undefined') return;
-  window.dataLayer?.push({ event: eventName, ...payload });
-  window.gtag?.('event', eventName, payload);
-  window.plausible?.(eventName, { props: payload });
-};
+const trustBadges = [
+  'VIMO 標準化退費保障',
+  '教練執照已實名認證',
+  '場地安全資訊已確認',
+  '活動強度與風險分級',
+  '年齡與程度分流',
+  '評價與回饋機制'
+];
+
+const dataLoop = ['使用者許願', '熱度池累積', '供給端看見需求', '教練／場館承接', '活動成局', '報名與參與', '評價回饋', '推薦更精準', '下一輪願望'];
+
+const revenueModels = [
+  ['活動／課程／賽事交易服務費', '當願望成功成局並產生活動報名，平台可收取交易或媒合服務費。'],
+  ['教練／場館 SaaS 訂閱', '供給端可訂閱進階看板，查看熱門願望、潛在客源與需求趨勢。'],
+  ['進階曝光與精準推薦', '教練、場館或活動主辦方可購買更高曝光或精準推薦位置。'],
+  ['運動生態圈分潤', '與保險、運動用品、旅遊、住宿、餐飲、企業福利等合作，創造場景式分潤。']
+];
+
+const abilityRows = [
+  ['心肺能力', '中等'],
+  ['近期運動頻率', '每週 2–3 次'],
+  ['運動強度紀錄', '穩定'],
+  ['建議分級', '初中階'],
+  ['適合活動', '新手友善局、親子活動、低中強度課程']
+];
 
 function App() {
-  if (window.location.pathname === '/success') {
-    return <SuccessPage />;
-  }
+  const [wishes, setWishes] = useState(wishesSeed);
+  const [toast, setToast] = useState('');
+  const [abilityCertified, setAbilityCertified] = useState(false);
+  const [selectedWish, setSelectedWish] = useState(wishesSeed[0]);
+
+  const rankedWishes = useMemo(
+    () => [...wishes].sort((a, b) => b.participants / b.threshold - a.participants / a.threshold),
+    [wishes]
+  );
+
+  const showToast = (message) => {
+    setToast(message);
+    window.clearTimeout(window.__vimoToast);
+    window.__vimoToast = window.setTimeout(() => setToast(''), 2800);
+  };
+
+  const joinWish = (wish) => {
+    setSelectedWish(wish);
+    setWishes((items) =>
+      items.map((item) => (item.id === wish.id ? { ...item, participants: Math.min(item.participants + 1, item.threshold) } : item))
+    );
+    showToast(`已加入「${wish.title}」，熱度已更新。`);
+  };
+
+  const shareWish = (wish) => {
+    setSelectedWish(wish);
+    showToast(`分享連結已建立：我正在 VIMO 許願「${wish.title}」，還差 ${Math.max(wish.threshold - wish.participants, 0)} 人就能成局，一起加入！`);
+  };
+
+  const acceptWish = (title) => {
+    showToast(`已建立「${title}」承接草案，可使用辦賽工具箱完成活動方案。`);
+  };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-macaron-base text-ink-700">
+    <main className="min-h-screen bg-[#F8FAFC] pb-24 text-ink-700 md:pb-0">
       <Header />
-      <Hero />
-      <RoleGateway />
-      <TopFiveWishes />
-      <WishPool />
-      <HeatPool />
-      <Flow />
-      <ProviderBoard />
+      <Hero rankedWishes={rankedWishes} />
+      <WishPool wishes={rankedWishes} onJoin={joinWish} onShare={shareWish} />
+      <SupplyDashboard onAccept={acceptWish} />
+      <AbilityCertification abilityCertified={abilityCertified} setAbilityCertified={setAbilityCertified} showToast={showToast} />
+      <TrustGovernance selectedWish={selectedWish} />
+      <DataLoop />
+      <BusinessModel />
       <LeadForms />
       <FinalCta />
+      <BottomNav />
+      {toast && <Toast message={toast} />}
     </main>
   );
 }
 
 function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/80 bg-white/75 backdrop-blur-2xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="VIMO 願動首頁">
+    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/88 backdrop-blur-2xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
+        <a href="#home" className="flex min-w-0 items-center gap-3" aria-label="VIMO 願動首頁">
           <img className="h-14 w-24 shrink-0 object-contain" src="/icons/vimo-mark-transparent.svg" alt="" aria-hidden="true" />
-          <div className="leading-tight">
+          <div className="hidden leading-tight sm:block">
             <p className="text-[15px] font-semibold tracking-[0.16em] text-ink-700">VIMO</p>
             <p className="text-xs font-medium text-ink-400">願動</p>
           </div>
         </a>
-        <nav className="hidden items-center gap-7 text-sm font-medium text-ink-500 md:flex">
-          <a href="#roles">角色入口</a>
-          <a href="#wish-pool">願望池</a>
-          <a href="#provider-board">接願看板</a>
+        <nav className="hidden items-center gap-6 text-sm font-semibold text-ink-500 lg:flex">
+          <a href="#pool">運動許願池</a>
+          <a href="#dashboard">主辦方看板</a>
+          <a href="#ability">能力認證</a>
+          <a href="#trust">信任機制</a>
+          <a href="#business">商業模式</a>
         </nav>
-        <a className="btn-primary h-10 px-4 text-sm" href="#wish-form" onClick={() => trackEvent('cta_click', { location: 'header', target: 'wish_form' })}>
-          開始許願
-        </a>
+        <a className="btn-primary h-11 px-5 text-sm" href="#pool">開始許願</a>
       </div>
     </header>
   );
 }
 
-function Hero() {
+function Hero({ rankedWishes }) {
   return (
-    <section id="top" className="section-shell relative grid min-h-[760px] items-center gap-10 pt-16 lg:grid-cols-[0.98fr_1.02fr] lg:pt-12">
-      <div className="pointer-events-none absolute left-[-16%] top-20 h-80 w-80 rounded-full bg-lilac-200/55 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-8 right-[-14%] h-[28rem] w-[28rem] rounded-full bg-mint-200/60 blur-3xl" />
-      <div className="relative z-10 max-w-2xl">
-        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/75 px-4 py-2 text-sm font-semibold text-ink-500 shadow-soft backdrop-blur-xl">
+    <section id="home" className="section-shell grid min-h-[760px] items-center gap-10 pt-16 lg:grid-cols-[0.95fr_1.05fr]">
+      <div>
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-ink-500 shadow-soft">
           <Sparkles className="h-4 w-4 text-coral-500" />
-          Vow Into Motion
+          運動需求聚合 × 雙邊市場媒合
         </div>
-        <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-normal text-ink-700 sm:text-6xl lg:text-7xl">
-          VIMO 願動
+        <h1 className="text-balance text-5xl font-semibold leading-[1.05] text-ink-700 sm:text-6xl">
+          VIMO 願動｜讓運動願望成局
         </h1>
-        <p className="mt-5 text-balance text-3xl font-semibold leading-tight text-ink-600 sm:text-4xl">
-          Turn Your Wish Into Motion.
+        <p className="mt-6 max-w-2xl text-xl leading-9 text-ink-500">
+          聚集真實運動需求，媒合教練、場館與活動資源，讓每一個想運動的人，都能找到適合自己的局。
         </p>
-        <p className="mt-6 max-w-xl text-lg leading-8 text-ink-500">
-          從一個人的運動願望，到一群人的行動。VIMO 讓許願者、主辦方、場地方、教練、裁判與周邊供給在同一個熱度池裡完成媒合。
-        </p>
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          {platformStats.map(([label, value]) => (
+            <div key={label} className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-soft">
+              <p className="text-sm font-semibold text-ink-400">{label}</p>
+              <p className="mt-2 text-3xl font-semibold text-ink-700">{value}</p>
+            </div>
+          ))}
+        </div>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <a className="btn-primary h-14 px-7 text-base" href="#wish-form" onClick={() => trackEvent('cta_click', { location: 'hero', target: 'wish_form' })}>
-            開始許願
+          <a className="btn-primary h-14 px-7 text-base" href="#pool">
+            進入運動許願池
             <ArrowRight className="h-5 w-5" />
           </a>
-          <a className="btn-secondary h-14 px-7 text-base" href="#roles">
-            先選角色
+          <a className="btn-secondary h-14 px-7 text-base" href="#ability">
+            取得能力認證
           </a>
         </div>
       </div>
-      <AppPreview />
-    </section>
-  );
-}
-
-function AppPreview() {
-  return (
-    <div className="relative z-10">
-      <div className="hero-device">
-        <div className="hero-screen">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-ice-50 to-mint-50" />
-          <div className="relative flex h-full flex-col gap-4 p-5">
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-ink-500 shadow-soft">VIMO 願望池</span>
-              <Waves className="h-6 w-6 text-mint-500" />
+      <div className="rounded-[36px] border border-slate-200 bg-white p-4 shadow-card">
+        <div className="rounded-[28px] bg-gradient-to-br from-ice-50 via-white to-mint-50 p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-mint-700">即時熱度池</p>
+              <h2 className="mt-1 text-2xl font-semibold text-ink-700">即將成局願望</h2>
             </div>
-            <div className="rounded-[28px] bg-white p-4 shadow-soft">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold text-coral-500">本週排行榜</p>
-                  <h2 className="mt-1 text-xl font-semibold text-ink-700">Top 5 願望</h2>
-                </div>
-                <span className="rounded-full bg-mint-50 px-3 py-1 text-xs font-semibold text-mint-700">即時熱度</span>
-              </div>
-              <div className="space-y-3">
-                {topWishes.slice(0, 5).map((wish, index) => (
-                  <div key={wish.title} className="flex items-center gap-3 rounded-2xl bg-mist-50 p-3">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-ink-600 shadow-soft">{index + 1}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-ink-700">{wish.title}</p>
-                      <p className="text-xs text-ink-400">{wish.tag} · {wish.match}%</p>
-                    </div>
+            <BarChart3 className="h-8 w-8 text-coral-500" />
+          </div>
+          <div className="mt-5 space-y-3">
+            {rankedWishes.slice(0, 4).map((wish, index) => (
+              <div key={wish.id} className="rounded-2xl bg-white p-4 shadow-soft">
+                <div className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mint-50 text-sm font-semibold text-mint-700">{index + 1}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-ink-700">{wish.title}</p>
+                    <p className="mt-1 text-sm text-ink-400">{wish.region} · {wish.participants} / {wish.threshold} 人</p>
+                    <Progress participants={wish.participants} threshold={wish.threshold} />
                   </div>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {['新願望 128', '可成局 17', '供給提案 42', '接願中 9'].map((item) => (
-                <div key={item} className="rounded-2xl bg-white/80 p-3 text-center text-xs font-semibold text-ink-500 shadow-soft">
-                  {item}
                 </div>
-              ))}
-            </div>
-            <button className="mt-auto h-12 rounded-full bg-ink-700 text-sm font-semibold text-white shadow-glow">我要接願</button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function RoleGateway() {
-  return (
-    <section id="roles" className="section-shell pt-8">
-      <SectionHeading
-        eyebrow="角色入口"
-        title="八種角色，不同入口，同一個願望池"
-        copy="選擇你現在的身份，快速進入對應任務：許願、接願、提供資源，或觀察正在升溫的活動機會。"
-      />
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {roles.map(({ title, desc, icon: Icon, color }) => (
-          <article key={title} className={`rounded-[28px] border border-white/80 bg-gradient-to-br ${color} p-5 shadow-soft`}>
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/85 shadow-soft">
-              <Icon className="h-6 w-6 text-ink-600" />
-            </div>
-            <h3 className="text-xl font-semibold text-ink-700">{title}</h3>
-            <p className="mt-2 text-sm leading-6 text-ink-500">{desc}</p>
-          </article>
-        ))}
-      </div>
     </section>
   );
 }
 
-function TopFiveWishes() {
+function WishPool({ wishes, onJoin, onShare }) {
   return (
-    <section id="top-wishes" className="section-shell">
+    <section id="pool" className="section-shell">
       <SectionHeading
-        eyebrow="Top 5 wishes"
-        title="本週 Top 5 願望"
-        copy="願望依需求熱度、供給補位與媒合進度排序。越靠前，越接近被主辦方或接願者啟動。"
+        eyebrow="運動許願池"
+        title="熱門願望卡片"
+        copy="使用者為了讓自己的願望成局，會主動邀請朋友加入；供給端則能直接看到可承接的需求。"
       />
-      <div className="mt-8 grid gap-4">
-        {topWishes.map((wish, index) => (
-          <article key={wish.title} className="grid gap-4 rounded-[28px] border border-white/80 bg-white/82 p-4 shadow-soft backdrop-blur-xl md:grid-cols-[88px_1fr_auto] md:items-center">
-            <div className="flex items-center gap-4 md:block md:text-center">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-ice-100 to-mint-100 text-lg font-semibold text-ink-700 shadow-soft">
-                {index + 1}
-              </span>
-              <img className={`h-20 w-28 rounded-2xl md:mt-3 md:h-16 md:w-full ${wish.imageClass}`} src={wish.image} alt={wish.title} />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold text-coral-500">{wish.tag} · {wish.place}</p>
-              <h3 className="mt-1 text-xl font-semibold text-ink-700">{wish.title}</h3>
-              <p className="mt-2 text-sm text-ink-400">許願者 {wish.wishers} · 需求 {wish.demand}% · 供給 {wish.supply}%</p>
-            </div>
-            <div className="md:w-52">
-              <HeatMeter value={wish.match} compact />
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function WishPool() {
-  return (
-    <section id="wish-pool" className="section-shell">
-      <SectionHeading
-        eyebrow="願望池"
-        title="正在升溫的活動機會"
-        copy="每張卡片都呈現需求熱度、供給缺口與媒合進度。你可以追蹤願望，也可以成為推動它成局的一方。"
-      />
-      <div className="mt-8 grid gap-5 lg:grid-cols-3">
+      <div className="mt-8 grid gap-5 lg:grid-cols-2">
         {wishes.map((wish) => (
-          <WishCard key={wish.title} wish={wish} />
+          <WishCard key={wish.id} wish={wish} onJoin={onJoin} onShare={onShare} />
         ))}
       </div>
     </section>
   );
 }
 
-function WishCard({ wish }) {
+function WishCard({ wish, onJoin, onShare }) {
+  const missing = Math.max(wish.threshold - wish.participants, 0);
+  const percent = Math.min(Math.round((wish.participants / wish.threshold) * 100), 100);
+  const hot = percent >= 80;
+
   return (
-    <article className="overflow-hidden rounded-[30px] border border-white/85 bg-white/82 shadow-card backdrop-blur-xl">
-      <div className="relative h-56 overflow-hidden">
-        <img className={`h-full w-full ${wish.imageClass}`} src={wish.image} alt={wish.title} />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-700/48 via-transparent to-white/5" />
-        <span className="absolute left-4 top-4 rounded-full bg-white/86 px-3 py-1 text-xs font-semibold text-ink-600 shadow-soft">{wish.tag}</span>
-      </div>
-      <div className="p-5">
-        <h3 className="text-xl font-semibold text-ink-700">{wish.title}</h3>
-        <p className="mt-2 flex items-center gap-2 text-sm font-medium text-ink-400">
-          <MapPin className="h-4 w-4 text-coral-500" />
-          {wish.place} · 許願者 {wish.wishers}
-        </p>
-        <HeatMeter value={wish.match} />
-        <div className="mt-5 grid grid-cols-3 gap-2">
-          <MiniStat label="需求" value={`${wish.demand}%`} tone="ice" />
-          <MiniStat label="供給" value={`${wish.supply}%`} tone="mint" />
-          <MiniStat label="媒合" value={`${wish.match}%`} tone="coral" />
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {wish.needs.map((need) => (
-            <span key={need} className="rounded-full bg-mist-100 px-3 py-1 text-xs font-semibold text-ink-500">
-              {need}
+    <article className="overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-card">
+      <div className="grid gap-0 md:grid-cols-[220px_1fr]">
+        <img className={`h-56 w-full md:h-full ${wish.imageClass}`} src={wish.image} alt={wish.title} />
+        <div className="p-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${hot ? 'bg-coral-50 text-coral-700' : 'bg-mint-50 text-mint-700'}`}>
+              {hot ? '🔥 熱度上升中' : wish.status}
             </span>
-          ))}
+            {wish.tags.map((tag) => (
+              <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-ink-500">{tag}</span>
+            ))}
+          </div>
+          <h3 className="mt-4 text-2xl font-semibold text-ink-700">{wish.title}</h3>
+          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-ink-400">
+            <MapPin className="h-4 w-4 text-coral-500" />
+            {wish.region}
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <MiniMetric label="熱度" value={`${wish.participants} / ${wish.threshold} 人`} />
+            <MiniMetric label="狀態" value={missing === 0 ? '已解鎖' : `還差 ${missing} 人`} />
+            <MiniMetric label="供給端回應" value={wish.provider} />
+          </div>
+          <Progress participants={wish.participants} threshold={wish.threshold} hot={hot} />
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <button className="btn-accent h-12 px-5" aria-label={`我也想參加 ${wish.title}`} onClick={() => onJoin(wish)}>
+              我也想參加
+            </button>
+            <button className="btn-secondary h-12 px-5 text-sm" aria-label={`分享邀請 ${wish.title}`} onClick={() => onShare(wish)}>
+              還差 {missing} 人解鎖！分享至 LINE / IG
+            </button>
+          </div>
         </div>
       </div>
     </article>
   );
 }
 
-function HeatMeter({ value, compact = false }) {
+function SupplyDashboard({ onAccept }) {
   return (
-    <div className="mt-4">
-      <div className="mb-2 flex items-center justify-between text-xs font-semibold text-ink-400">
-        <span>成局進度</span>
-        <span className="text-ink-700">{value}%</span>
-      </div>
-      <div className="h-4 overflow-hidden rounded-full bg-mist-100 shadow-inner">
-        <div className="h-full rounded-full bg-gradient-to-r from-ice-400 via-mint-400 to-gold-400" style={{ width: `${value}%` }} />
-      </div>
-      {!compact && (
-        <div className="mt-2 flex justify-between text-[11px] font-semibold text-ink-300">
-          <span>0</span>
-          <span>40 累積</span>
-          <span>70 接近</span>
-          <span>85 可啟動</span>
-          <span>100</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MiniStat({ label, value, tone }) {
-  const toneClass = {
-    ice: 'bg-ice-50 text-ice-700',
-    mint: 'bg-mint-50 text-mint-700',
-    coral: 'bg-coral-50 text-coral-700'
-  }[tone];
-
-  return (
-    <div className={`rounded-2xl p-3 text-center ${toneClass}`}>
-      <p className="text-xs font-semibold">{label}</p>
-      <p className="mt-1 text-lg font-semibold">{value}</p>
-    </div>
-  );
-}
-
-function HeatPool() {
-  return (
-    <section id="heat" className="section-shell">
-      <div className="rounded-[36px] border border-white/80 bg-white/80 p-6 shadow-card backdrop-blur-2xl sm:p-8 lg:p-10">
-        <div className="grid gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-coral-50 px-4 py-2 text-sm font-semibold text-coral-700">
-              <Flame className="h-4 w-4" />
-              願望熱度池
-            </p>
-            <h2 className="mt-5 text-3xl font-semibold text-ink-700 sm:text-4xl">把分散的期待，整理成可被承接的市場訊號。</h2>
-            <p className="mt-4 leading-7 text-ink-500">
-              系統會持續整理需求、地點、時段、供給缺口和成局門檻，讓熱門願望有機會被真正承接。
-            </p>
+    <section id="dashboard" className="section-shell">
+      <SectionHeading
+        eyebrow="主辦方看板"
+        title="潛在客源熱度看板"
+        copy="教練、場館與主辦方不需要盲目開課，而是依據已被聚合的需求判斷是否承接。"
+      />
+      <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        {businessCards.map(([title, text]) => (
+          <div key={title} className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-soft">
+            <p className="text-lg font-semibold text-ink-700">{title}</p>
+            <p className="mt-3 text-sm leading-6 text-ink-500">{text}</p>
           </div>
-          <div className="rounded-[28px] bg-mist-50 p-5 shadow-inner">
-            <div className="mb-5 flex items-end justify-between">
-              <div>
-                <p className="text-sm font-semibold text-ink-400">本週累積願望</p>
-                <p className="text-5xl font-semibold text-ink-700">3,314</p>
+        ))}
+      </div>
+      <div className="mt-6 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-card">
+        <div className="grid grid-cols-6 gap-4 border-b border-slate-100 bg-slate-50 px-5 py-4 text-xs font-semibold text-ink-400 max-lg:hidden">
+          <span>需求</span><span>地區</span><span>熱度</span><span>狀態</span><span>建議收益</span><span>動作</span>
+        </div>
+        {supplyOpportunities.map(([name, region, heat, status, revenue, cta]) => (
+          <div key={name} className="grid gap-4 border-b border-slate-100 px-5 py-5 last:border-b-0 lg:grid-cols-6 lg:items-center">
+            <div className="font-semibold text-ink-700">{name}</div>
+            <div className="text-sm text-ink-500">{region}</div>
+            <div className="text-sm font-semibold text-mint-700">{heat}</div>
+            <div><span className="rounded-full bg-coral-50 px-3 py-1 text-xs font-semibold text-coral-700">{status}</span></div>
+            <div className="text-sm text-ink-500">{revenue}</div>
+            <button className="btn-accent h-11 px-4 text-sm" aria-label={`${cta} ${name}`} onClick={() => onAccept(name)}>{cta}</button>
+          </div>
+        ))}
+      </div>
+      <Toolbox />
+    </section>
+  );
+}
+
+function Toolbox() {
+  return (
+    <div className="mt-6 rounded-[30px] border border-slate-200 bg-white p-6 shadow-soft">
+      <div className="flex items-center gap-3">
+        <ReceiptText className="h-6 w-6 text-coral-500" />
+        <h3 className="text-2xl font-semibold text-ink-700">辦賽工具箱</h3>
+      </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        {toolbox.map(([Icon, label]) => (
+          <div key={label} className="rounded-2xl bg-slate-50 p-4 text-center">
+            <Icon className="mx-auto h-6 w-6 text-mint-600" />
+            <p className="mt-3 text-sm font-semibold text-ink-600">{label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AbilityCertification({ abilityCertified, setAbilityCertified, showToast }) {
+  return (
+    <section id="ability" className="section-shell">
+      <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-mint-600">Objective ability</p>
+          <h2 className="mt-3 text-4xl font-semibold text-ink-700">客觀能力認證</h2>
+          <p className="mt-4 leading-8 text-ink-500">
+            透過 Apple Health、Garmin 或其他穿戴裝置資料，建立更準確的運動能力分級，避免使用者主觀高估或低估自身能力。
+          </p>
+          <button
+            className="btn-primary mt-7 h-14 px-6"
+            onClick={() => {
+              setAbilityCertified(true);
+              showToast('已模擬連接穿戴裝置，能力認證狀態已更新。');
+            }}
+          >
+            <Watch className="h-5 w-5" />
+            連接穿戴裝置，取得能力認證
+          </button>
+        </div>
+        <div className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-card">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-ink-400">Apple Health / Garmin</p>
+              <h3 className="mt-1 text-2xl font-semibold text-ink-700">運動能力資料卡</h3>
+            </div>
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${abilityCertified ? 'bg-mint-50 text-mint-700' : 'bg-gold-100 text-ink-600'}`}>
+              {abilityCertified ? '已完成客觀能力認證' : '尚未認證，建議連接裝置'}
+            </span>
+          </div>
+          <div className="mt-5 grid gap-3">
+            {abilityRows.map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                <span className="text-sm font-semibold text-ink-400">{label}</span>
+                <span className="text-right text-sm font-semibold text-ink-700">{value}</span>
               </div>
-              <p className="rounded-full bg-gold-100 px-4 py-2 text-sm font-semibold text-ink-600">+28%</p>
-            </div>
-            <div className="flex h-6 overflow-hidden rounded-full bg-white">
-              {heatSegments.map((segment) => (
-                <div key={segment.label} className={`${segment.color} h-full`} style={{ width: segment.width }} />
-              ))}
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-4">
-              {heatSegments.map((segment) => (
-                <div key={segment.label} className="rounded-2xl bg-white p-3">
-                  <p className="text-xs font-semibold text-ink-400">{segment.label}</p>
-                  <p className="mt-1 text-lg font-semibold text-ink-700">{segment.value}</p>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -430,22 +439,67 @@ function HeatPool() {
   );
 }
 
-function Flow() {
+function TrustGovernance({ selectedWish }) {
+  return (
+    <section id="trust" className="section-shell">
+      <SectionHeading
+        eyebrow="信任治理"
+        title="活動詳情與報名前確認"
+        copy="VIMO 不只媒合，也在報名、風險揭露、退費規則與評價回饋中建立平台治理。"
+      />
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-card">
+          <p className="text-sm font-semibold text-coral-600">{selectedWish.region}</p>
+          <h3 className="mt-2 text-3xl font-semibold text-ink-700">{selectedWish.title}</h3>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {trustBadges.map((badge) => (
+              <span key={badge} className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-2 text-xs font-semibold text-ink-600">
+                <BadgeCheck className="h-4 w-4 text-mint-600" />
+                {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-soft">
+            <h4 className="flex items-center gap-2 text-xl font-semibold text-ink-700">
+              <ShieldCheck className="h-5 w-5 text-coral-500" />
+              報名前請確認
+            </h4>
+            <p className="mt-3 text-sm leading-7 text-ink-500">
+              本活動已標示運動強度、適合程度與退費規則。請依自身健康狀況選擇適合活動，如有特殊疾病或身體不適，請先諮詢專業人員。
+            </p>
+          </div>
+          <div className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-soft">
+            <h4 className="flex items-center gap-2 text-xl font-semibold text-ink-700">
+              <FileCheck2 className="h-5 w-5 text-mint-600" />
+              退款規則
+            </h4>
+            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-ink-500">
+              活動開始 7 日前取消：可全額退費{'\n'}
+              活動開始 3 日前取消：可退 50%{'\n'}
+              活動開始前 72 小時內取消：依主辦方規則辦理
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DataLoop() {
   return (
     <section className="section-shell">
       <SectionHeading
-        eyebrow="成局流程"
-        title="許願 → 聚集熱度 → 供給媒合 → 活動成局"
-        copy="每一次許願都會進入熱度池。當需求和供給逐步到位，活動就能從想法進入報名與執行。"
+        eyebrow="資料回饋閉環"
+        title="每一次願望與參與，都會讓推薦更精準"
+        copy="VIMO 的價值會隨著許願、參與、評價與供給端回應不斷累積，形成運動生活平台的資料資產。"
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-4">
-        {flowSteps.map(([title, text], index) => (
-          <div key={title} className="rounded-[26px] border border-white/80 bg-white/80 p-5 shadow-soft">
-            <div className="mb-7 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-lilac-100 to-mint-100 text-sm font-semibold text-ink-600">
-              {String(index + 1).padStart(2, '0')}
-            </div>
-            <h3 className="text-xl font-semibold text-ink-700">{title}</h3>
-            <p className="mt-3 text-sm leading-6 text-ink-500">{text}</p>
+      <div className="mt-8 grid gap-3 md:grid-cols-3 lg:grid-cols-9">
+        {dataLoop.map((step, index) => (
+          <div key={step} className="relative rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-soft">
+            <span className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-mint-50 text-xs font-semibold text-mint-700">{index + 1}</span>
+            <p className="mt-3 text-sm font-semibold text-ink-600">{step}</p>
           </div>
         ))}
       </div>
@@ -453,38 +507,18 @@ function Flow() {
   );
 }
 
-function ProviderBoard() {
+function BusinessModel() {
   return (
-    <section id="provider-board" className="section-shell">
-      <div className="grid gap-8 rounded-[36px] bg-ink-700 p-6 text-white shadow-card sm:p-8 lg:grid-cols-[0.85fr_1.15fr] lg:p-10">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-ice-200">接願看板</p>
-          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">主辦端與接願者看到的，不是空泛需求，而是可評估機會。</h2>
-          <p className="mt-4 leading-7 text-ice-50/80">
-            場地方、教練、裁判、周邊廠商都能看到缺口在哪裡，決定要不要投入資源。
-          </p>
-          <a className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-ink-700 shadow-glow" href="#provider-form" onClick={() => trackEvent('cta_click', { location: 'provider_board', target: 'provider_form' })}>
-            申請成為供給夥伴
-            <Handshake className="h-5 w-5 text-mint-500" />
-          </a>
-        </div>
-        <div className="grid gap-4">
-          {providerOpportunities.map((item) => (
-            <article key={item.title} className="rounded-[24px] border border-white/10 bg-white/10 p-5 backdrop-blur-xl">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-gold-300">{item.role}</p>
-                  <h3 className="mt-1 text-xl font-semibold">{item.title}</h3>
-                </div>
-                <span className="rounded-full bg-white/14 px-3 py-1 text-sm font-semibold">{item.progress}%</span>
-              </div>
-              <p className="mt-3 text-sm leading-6 text-ice-50/75">{item.note}</p>
-              <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/12">
-                <div className="h-full rounded-full bg-gradient-to-r from-ice-300 via-mint-400 to-gold-300" style={{ width: `${item.progress}%` }} />
-              </div>
-            </article>
-          ))}
-        </div>
+    <section id="business" className="section-shell">
+      <SectionHeading eyebrow="Revenue model" title="VIMO 如何創造收益" copy="需求聚合不是流量頁，而是交易、工具、供給端訂閱與生態分潤的入口。" />
+      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        {revenueModels.map(([title, text], index) => (
+          <div key={title} className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-soft">
+            <span className="text-sm font-semibold text-coral-500">0{index + 1}</span>
+            <h3 className="mt-4 text-xl font-semibold text-ink-700">{title}</h3>
+            <p className="mt-3 text-sm leading-6 text-ink-500">{text}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -503,35 +537,19 @@ function LeadForms() {
 
 function WishForm() {
   return (
-    <form
-      id="wish-form"
-      name="vimo-wish"
-      method="POST"
-      action="/success.html"
-      data-netlify="true"
-      data-netlify-honeypot="bot-field"
-      className="rounded-[34px] border border-white/80 bg-white/82 p-6 shadow-card backdrop-blur-2xl sm:p-8"
-      onSubmit={() => trackEvent('lead_submit', { form: 'wish' })}
-    >
+    <form name="vimo-wish" method="POST" action="/success.html" data-netlify="true" data-netlify-honeypot="bot-field" className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-card sm:p-8">
       <input type="hidden" name="form-name" value="vimo-wish" />
-      <p className="hidden">
-        <label>
-          不需填寫 <input name="bot-field" />
-        </label>
-      </p>
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-coral-600">For wishers</p>
-      <h2 className="mt-3 text-3xl font-semibold text-ink-700">開始許願</h2>
-      <p className="mt-3 text-sm leading-6 text-ink-500">留下你的運動願望，讓附近有相同需求的人一起累積熱度。</p>
+      <p className="hidden"><label>不需填寫 <input name="bot-field" /></label></p>
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-coral-600">需求端</p>
+      <h2 className="mt-3 text-3xl font-semibold text-ink-700">新增我的運動願望</h2>
       <div className="mt-7 grid gap-4 sm:grid-cols-2">
         <Field label="姓名" name="name" placeholder="王小願" required />
         <Field label="Email" name="email" type="email" placeholder="you@example.com" required />
-        <Field label="城市 / 區域" name="city" placeholder="台北市信義區" required />
-        <SelectField label="願望類型" name="wishType" required options={['想運動', '想學習', '想揪團', '想辦活動']} />
-        <Field label="運動項目" name="sport" placeholder="羽球、肌力、瑜珈、跑步..." required />
-        <SelectField label="聯絡偏好" name="contactPreference" options={['Email', 'LINE', '電話', '先不用聯絡']} />
+        <Field label="城市 / 區域" name="city" placeholder="新竹市東區" required />
+        <Field label="運動項目" name="sport" placeholder="籃球、羽球、網球..." required />
       </div>
-      <TextareaField label="你的願望" name="wish" placeholder="我希望下班後能在附近找到新手友善的羽球共學團..." required />
-      <button className="btn-primary mt-6 h-14 w-full px-6 text-base sm:w-auto" type="submit">
+      <TextareaField label="你的願望" name="wish" placeholder="我希望週六上午能找到兒童籃球新手班..." required />
+      <button className="btn-accent mt-6 h-14 w-full px-6 text-base sm:w-auto" type="submit">
         送出願望
         <Send className="h-5 w-5" />
       </button>
@@ -541,36 +559,20 @@ function WishForm() {
 
 function ProviderForm() {
   return (
-    <form
-      id="provider-form"
-      name="vimo-provider"
-      method="POST"
-      action="/success.html"
-      data-netlify="true"
-      data-netlify-honeypot="bot-field"
-      className="rounded-[34px] bg-gradient-to-br from-ink-700 to-ink-600 p-6 text-white shadow-card sm:p-8"
-      onSubmit={() => trackEvent('lead_submit', { form: 'provider' })}
-    >
+    <form name="vimo-provider" method="POST" action="/success.html" data-netlify="true" data-netlify-honeypot="bot-field" className="rounded-[34px] bg-ink-700 p-6 text-white shadow-card sm:p-8">
       <input type="hidden" name="form-name" value="vimo-provider" />
-      <p className="hidden">
-        <label>
-          不需填寫 <input name="bot-field" />
-        </label>
-      </p>
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-ice-200">For suppliers</p>
-      <h2 className="mt-3 text-3xl font-semibold">供給端加入</h2>
-      <p className="mt-3 text-sm leading-6 text-ice-50/80">適合場地方、教練、裁判、主辦方、器材品牌與活動服務商，先從早期合作名單開始。</p>
+      <p className="hidden"><label>不需填寫 <input name="bot-field" /></label></p>
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-ice-200">供給端</p>
+      <h2 className="mt-3 text-3xl font-semibold">申請加入主辦方看板</h2>
       <div className="mt-7 grid gap-4 sm:grid-cols-2">
         <Field dark label="單位 / 品牌" name="company" placeholder="VIMO 運動教室" required />
-        <Field dark label="聯絡人角色" name="role" placeholder="創辦人 / 教練 / 場館經理" required />
-        <SelectField dark label="供給類型" name="serviceType" required options={['場地', '教練', '裁判', '活動主辦', '周邊廠商', '其他']} />
+        <Field dark label="聯絡人角色" name="role" placeholder="教練 / 場館經理" required />
         <Field dark label="Email" name="email" type="email" placeholder="partner@example.com" required />
-        <Field dark label="服務區域" name="city" placeholder="台北、新北、桃園..." required />
+        <Field dark label="服務區域" name="city" placeholder="新竹、竹北、台北..." required />
       </div>
-      <TextareaField dark label="可以提供什麼資源？" name="message" placeholder="例如：平日晚間場地、銀髮肌力教練、賽事裁判、活動保險..." required />
+      <TextareaField dark label="可提供資源" name="message" placeholder="場地、教練、裁判、活動企劃、保險..." required />
       <button className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-white px-6 text-base font-semibold text-ink-700 shadow-glow transition duration-200 hover:-translate-y-0.5 sm:w-auto" type="submit">
         申請加入
-        <Handshake className="h-5 w-5 text-mint-500" />
       </button>
     </form>
   );
@@ -585,30 +587,36 @@ function Field({ label, name, type = 'text', placeholder, required, dark }) {
   );
 }
 
-function SelectField({ label, name, options, required, dark }) {
-  return (
-    <label className="block">
-      <span className={`text-sm font-semibold ${dark ? 'text-ice-50/80' : 'text-ink-500'}`}>{label}</span>
-      <select className={`form-input ${dark ? 'form-input-dark' : ''}`} name={name} required={required} defaultValue="">
-        <option value="" disabled>
-          請選擇
-        </option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
 function TextareaField({ label, name, placeholder, required, dark }) {
   return (
     <label className="mt-4 block">
       <span className={`text-sm font-semibold ${dark ? 'text-ice-50/80' : 'text-ink-500'}`}>{label}</span>
       <textarea className={`form-input min-h-32 resize-y ${dark ? 'form-input-dark' : ''}`} name={name} placeholder={placeholder} required={required} />
     </label>
+  );
+}
+
+function MiniMetric({ label, value }) {
+  return (
+    <div className="rounded-2xl bg-slate-50 p-3">
+      <p className="text-xs font-semibold text-ink-400">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-ink-700">{value}</p>
+    </div>
+  );
+}
+
+function Progress({ participants, threshold, hot }) {
+  const percent = Math.min((participants / threshold) * 100, 100);
+  return (
+    <div className="mt-4">
+      <div className="mb-2 flex justify-between text-xs font-semibold text-ink-400">
+        <span>熱度進度</span>
+        <span>{Math.round(percent)}%</span>
+      </div>
+      <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+        <div className={`h-full rounded-full ${hot || percent >= 80 ? 'bg-gradient-to-r from-coral-400 to-gold-400 shadow-[0_0_18px_rgba(245,107,93,0.45)]' : 'bg-gradient-to-r from-ice-400 to-mint-400'}`} style={{ width: `${percent}%` }} />
+      </div>
+    </div>
   );
 }
 
@@ -625,41 +633,42 @@ function SectionHeading({ eyebrow, title, copy }) {
 function FinalCta() {
   return (
     <section className="section-shell pb-16">
-      <div className="relative overflow-hidden rounded-[40px] bg-gradient-to-br from-white via-lilac-50 to-mint-50 p-8 text-center shadow-card sm:p-12">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-white shadow-glow">
-          <Dumbbell className="h-8 w-8 text-coral-500" />
-        </div>
-        <h2 className="text-4xl font-semibold tracking-normal text-ink-700">讓願望開始流動</h2>
+      <div className="rounded-[38px] bg-gradient-to-br from-white via-ice-50 to-mint-50 p-8 text-center shadow-card sm:p-12">
+        <Landmark className="mx-auto h-10 w-10 text-coral-500" />
+        <h2 className="mt-5 text-4xl font-semibold text-ink-700">讓運動願望成為可被投資、可被承接、可被治理的平台市場</h2>
         <p className="mx-auto mt-4 max-w-2xl leading-7 text-ink-500">
-          從一個人的念頭，到一群人的行動。現在就把你的願望放進池裡，讓它開始被看見、被支持、被承接。
+          VIMO 將需求、供給、能力分級、信任機制與資料回饋整合在同一個運動科技平台原型中。
         </p>
-        <a className="btn-primary mx-auto mt-8 h-14 w-fit px-8 text-base" href="#wish-form" onClick={() => trackEvent('cta_click', { location: 'final', target: 'wish_form' })}>
-          開始許願
-          <Users className="h-5 w-5" />
-        </a>
       </div>
     </section>
   );
 }
 
-function SuccessPage() {
+function BottomNav() {
+  const items = [
+    [Home, '首頁', '#home'],
+    [Dumbbell, '許願池', '#pool'],
+    [LineChart, '主辦方', '#dashboard'],
+    [Smartphone, '我的', '#ability']
+  ];
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-macaron-base px-5 text-ink-700">
-      <section className="max-w-xl rounded-[38px] border border-white/80 bg-white/80 p-8 text-center shadow-card backdrop-blur-2xl sm:p-12">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-gradient-to-br from-ice-100 to-mint-100 shadow-glow">
-          <CheckCircle2 className="h-10 w-10 text-mint-500" />
-        </div>
-        <p className="mt-8 text-sm font-semibold uppercase tracking-[0.22em] text-mint-600">Received</p>
-        <h1 className="mt-3 text-4xl font-semibold text-ink-700">已收到你的回覆</h1>
-        <p className="mt-4 leading-7 text-ink-500">
-          謝謝你加入 VIMO 願動。這份願望會進入熱度池，成為推動下一場活動成局的起點。
-        </p>
-        <a className="btn-primary mx-auto mt-8 h-14 w-fit px-7 text-base" href="/">
-          回到首頁
-          <ArrowRight className="h-5 w-5" />
+    <nav className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-[28px] border border-slate-200 bg-white/92 p-2 shadow-card backdrop-blur-xl md:hidden">
+      {items.map(([Icon, label, href]) => (
+        <a key={label} href={href} className="flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-xs font-semibold text-ink-500">
+          <Icon className="h-5 w-5" />
+          {label}
         </a>
-      </section>
-    </main>
+      ))}
+    </nav>
+  );
+}
+
+function Toast({ message }) {
+  return (
+    <div className="fixed left-1/2 top-20 z-[80] w-[min(92vw,520px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-ink-700 shadow-card">
+      {message}
+    </div>
   );
 }
 

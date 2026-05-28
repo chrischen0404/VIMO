@@ -43,6 +43,10 @@ a {
     @apply inline-flex items-center justify-center rounded-full border border-white/90 bg-white/80 font-semibold text-ink-600 shadow-soft backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-4 focus:ring-ice-100;
   }
 
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-coral-500 font-semibold text-white shadow-glow transition duration-200 hover:-translate-y-0.5 hover:bg-coral-600 focus:outline-none focus:ring-4 focus:ring-coral-100;
+  }
+
   .hero-device {
     @apply relative mx-auto aspect-[0.68] w-full max-w-[390px] rounded-[46px] border border-white/90 bg-gradient-to-br from-white to-lilac-50 p-3 shadow-card;
   }
