@@ -197,9 +197,13 @@ function App() {
 function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/90 backdrop-blur-2xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-3 px-4 sm:px-5">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-5">
         <a href="#home" className="flex min-w-0 items-center" aria-label="VIMO 願動首頁">
-          <img className="h-16 w-[188px] shrink-0 object-contain sm:w-[210px]" src="/icons/vimo-header-logo.svg" alt="VIMO 願動" />
+          <img
+            className="block h-[72px] w-[128px] shrink-0 object-contain sm:h-[76px] sm:w-[136px]"
+            src="/icons/vimo-header-logo.png"
+            alt="VIMO 願動"
+          />
         </a>
         <nav className="hidden items-center gap-6 text-sm font-semibold text-ink-500 lg:flex">
           <a href="#pool">運動許願池</a>
