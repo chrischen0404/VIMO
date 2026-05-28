@@ -11,6 +11,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: [
         'offline.html',
+        'success.html',
         'manifest.webmanifest',
         'icons/vimo-icon.svg',
         'icons/icon-192.png',
