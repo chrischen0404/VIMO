@@ -6,8 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      strategies: 'injectManifest',
-      srcDir: 'src',
+      strategies: 'generateSW',
       filename: 'sw.js',
       registerType: 'autoUpdate',
       includeAssets: [
@@ -19,8 +18,37 @@ export default defineConfig({
         'icons/maskable-512.png'
       ],
       manifest: false,
-      injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webmanifest}']
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webmanifest}'],
+        navigateFallback: '/offline.html',
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'vimo-pages',
+              networkTimeoutSeconds: 3
+            }
+          },
+          {
+            urlPattern: ({ request }) => ['script', 'style', 'worker'].includes(request.destination),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'vimo-app-shell'
+            }
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'vimo-images',
+              expiration: {
+                maxEntries: 80,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          }
+        ]
       },
       devOptions: {
         enabled: true,
