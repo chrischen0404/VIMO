@@ -28,12 +28,13 @@ const roles = [
   { title: '看熱鬧', desc: '追蹤願望升溫、幫忙投票，觀察下一個爆點。', icon: Eye, color: 'from-lilac-100 to-coral-100' }
 ];
 
-const wishes = [
+const topWishes = [
   {
     title: '希望社區有適合長輩的防跌肌力課',
     tag: '銀髮健康',
     place: '北投關渡',
     image: '/media/senior-strength.jpg',
+    imageClass: 'object-cover object-[center_35%]',
     wishers: 768,
     demand: 94,
     supply: 58,
@@ -44,7 +45,8 @@ const wishes = [
     title: '新竹初學者羽球友善賽',
     tag: '比賽願望',
     place: '新竹東區',
-    image: '/media/hero-motion.jpg',
+    image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=82',
+    imageClass: 'object-cover object-center',
     wishers: 912,
     demand: 91,
     supply: 42,
@@ -56,13 +58,40 @@ const wishes = [
     tag: '親子活動',
     place: '新北板橋',
     image: '/media/home-hero.png',
+    imageClass: 'object-cover object-center',
     wishers: 642,
     demand: 82,
     supply: 67,
     match: 74,
     needs: ['活動設計', '親子教練', '安全保險']
+  },
+  {
+    title: '公司想辦一場有參與感的運動日',
+    tag: '企業活動',
+    place: '台北內湖',
+    image: '/media/hero-motion.jpg',
+    imageClass: 'object-cover object-center',
+    wishers: 536,
+    demand: 79,
+    supply: 68,
+    match: 73,
+    needs: ['主辦企劃', '團隊競賽', '攝影紀錄']
+  },
+  {
+    title: '想和毛孩一起參加戶外共跑',
+    tag: '毛孩活動',
+    place: '台中北屯',
+    image: '/media/home-hero.png',
+    imageClass: 'object-cover object-center',
+    wishers: 421,
+    demand: 77,
+    supply: 46,
+    match: 64,
+    needs: ['寵物友善', '補水點', '安全動線']
   }
 ];
+
+const wishes = topWishes.slice(0, 3);
 
 const heatSegments = [
   { label: '想參加', value: '1,284', width: '34%', color: 'bg-ice-400' },
@@ -101,6 +130,7 @@ function App() {
       <Header />
       <Hero />
       <RoleGateway />
+      <TopFiveWishes />
       <WishPool />
       <HeatPool />
       <Flow />
@@ -180,17 +210,28 @@ function AppPreview() {
               <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-ink-500 shadow-soft">VIMO 願望池</span>
               <Waves className="h-6 w-6 text-mint-500" />
             </div>
-            <div className="overflow-hidden rounded-[28px] bg-white shadow-soft">
-              <img className="h-44 w-full object-cover object-center" src="/media/senior-strength.jpg" alt="銀髮族肌力訓練" />
-              <div className="p-4">
-                <p className="text-xs font-semibold text-coral-500">TOP 1 · 銀髮健康</p>
-                <h2 className="mt-2 text-xl font-semibold text-ink-700">社區防跌肌力課</h2>
-                <p className="mt-1 text-sm text-ink-400">北投關渡 · 許願者 768</p>
-                <HeatMeter value={86} />
+            <div className="rounded-[28px] bg-white p-4 shadow-soft">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-coral-500">本週排行榜</p>
+                  <h2 className="mt-1 text-xl font-semibold text-ink-700">Top 5 願望</h2>
+                </div>
+                <span className="rounded-full bg-mint-50 px-3 py-1 text-xs font-semibold text-mint-700">即時熱度</span>
+              </div>
+              <div className="space-y-3">
+                {topWishes.slice(0, 5).map((wish, index) => (
+                  <div key={wish.title} className="flex items-center gap-3 rounded-2xl bg-mist-50 p-3">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-ink-600 shadow-soft">{index + 1}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-ink-700">{wish.title}</p>
+                      <p className="text-xs text-ink-400">{wish.tag} · {wish.match}%</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {['教練媒合 12', '場地候選 4', '主辦關注 7', '周邊提案 5'].map((item) => (
+              {['新願望 128', '可成局 17', '供給提案 42', '接願中 9'].map((item) => (
                 <div key={item} className="rounded-2xl bg-white/80 p-3 text-center text-xs font-semibold text-ink-500 shadow-soft">
                   {item}
                 </div>
@@ -208,9 +249,9 @@ function RoleGateway() {
   return (
     <section id="roles" className="section-shell pt-8">
       <SectionHeading
-        eyebrow="Role gateway"
+        eyebrow="角色入口"
         title="八種角色，不同入口，同一個願望池"
-        copy="新版首頁回到產品本質：先讓使用者知道自己在平台裡是誰，再決定要許願、接願、提供資源或觀察熱度。"
+        copy="選擇你現在的身份，快速進入對應任務：許願、接願、提供資源，或觀察正在升溫的活動機會。"
       />
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {roles.map(({ title, desc, icon: Icon, color }) => (
@@ -227,13 +268,45 @@ function RoleGateway() {
   );
 }
 
+function TopFiveWishes() {
+  return (
+    <section id="top-wishes" className="section-shell">
+      <SectionHeading
+        eyebrow="Top 5 wishes"
+        title="本週 Top 5 願望"
+        copy="願望依需求熱度、供給補位與媒合進度排序。越靠前，越接近被主辦方或接願者啟動。"
+      />
+      <div className="mt-8 grid gap-4">
+        {topWishes.map((wish, index) => (
+          <article key={wish.title} className="grid gap-4 rounded-[28px] border border-white/80 bg-white/82 p-4 shadow-soft backdrop-blur-xl md:grid-cols-[88px_1fr_auto] md:items-center">
+            <div className="flex items-center gap-4 md:block md:text-center">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-ice-100 to-mint-100 text-lg font-semibold text-ink-700 shadow-soft">
+                {index + 1}
+              </span>
+              <img className={`h-20 w-28 rounded-2xl md:mt-3 md:h-16 md:w-full ${wish.imageClass}`} src={wish.image} alt={wish.title} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-coral-500">{wish.tag} · {wish.place}</p>
+              <h3 className="mt-1 text-xl font-semibold text-ink-700">{wish.title}</h3>
+              <p className="mt-2 text-sm text-ink-400">許願者 {wish.wishers} · 需求 {wish.demand}% · 供給 {wish.supply}%</p>
+            </div>
+            <div className="md:w-52">
+              <HeatMeter value={wish.match} compact />
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function WishPool() {
   return (
     <section id="wish-pool" className="section-shell">
       <SectionHeading
-        eyebrow="Wish pool"
-        title="熱門願望不是貼文，是等待成局的活動雛形"
-        copy="每張願望卡都同時呈現需求熱度、供給缺口與媒合進度，讓許願者和供給端看的是同一件事。"
+        eyebrow="願望池"
+        title="正在升溫的活動機會"
+        copy="每張卡片都呈現需求熱度、供給缺口與媒合進度。你可以追蹤願望，也可以成為推動它成局的一方。"
       />
       <div className="mt-8 grid gap-5 lg:grid-cols-3">
         {wishes.map((wish) => (
@@ -248,7 +321,7 @@ function WishCard({ wish }) {
   return (
     <article className="overflow-hidden rounded-[30px] border border-white/85 bg-white/82 shadow-card backdrop-blur-xl">
       <div className="relative h-56 overflow-hidden">
-        <img className="h-full w-full object-cover object-center" src={wish.image} alt={wish.title} />
+        <img className={`h-full w-full ${wish.imageClass}`} src={wish.image} alt={wish.title} />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-700/48 via-transparent to-white/5" />
         <span className="absolute left-4 top-4 rounded-full bg-white/86 px-3 py-1 text-xs font-semibold text-ink-600 shadow-soft">{wish.tag}</span>
       </div>
@@ -276,7 +349,7 @@ function WishCard({ wish }) {
   );
 }
 
-function HeatMeter({ value }) {
+function HeatMeter({ value, compact = false }) {
   return (
     <div className="mt-4">
       <div className="mb-2 flex items-center justify-between text-xs font-semibold text-ink-400">
@@ -286,13 +359,15 @@ function HeatMeter({ value }) {
       <div className="h-4 overflow-hidden rounded-full bg-mist-100 shadow-inner">
         <div className="h-full rounded-full bg-gradient-to-r from-ice-400 via-mint-400 to-gold-400" style={{ width: `${value}%` }} />
       </div>
-      <div className="mt-2 flex justify-between text-[11px] font-semibold text-ink-300">
-        <span>0</span>
-        <span>40 累積</span>
-        <span>70 接近</span>
-        <span>85 可啟動</span>
-        <span>100</span>
-      </div>
+      {!compact && (
+        <div className="mt-2 flex justify-between text-[11px] font-semibold text-ink-300">
+          <span>0</span>
+          <span>40 累積</span>
+          <span>70 接近</span>
+          <span>85 可啟動</span>
+          <span>100</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -324,7 +399,7 @@ function HeatPool() {
             </p>
             <h2 className="mt-5 text-3xl font-semibold text-ink-700 sm:text-4xl">把分散的期待，整理成可被承接的市場訊號。</h2>
             <p className="mt-4 leading-7 text-ink-500">
-              熱度池不是單純投票，而是把需求、地點、時段、供給缺口和成局門檻放在同一張圖裡。
+              系統會持續整理需求、地點、時段、供給缺口和成局門檻，讓熱門願望有機會被真正承接。
             </p>
           </div>
           <div className="rounded-[28px] bg-mist-50 p-5 shadow-inner">
@@ -359,9 +434,9 @@ function Flow() {
   return (
     <section className="section-shell">
       <SectionHeading
-        eyebrow="How it moves"
+        eyebrow="成局流程"
         title="許願 → 聚集熱度 → 供給媒合 → 活動成局"
-        copy="這個流程會直接出現在使用者操作裡，讓大家知道自己不是填問卷，而是在推動一場活動發生。"
+        copy="每一次許願都會進入熱度池。當需求和供給逐步到位，活動就能從想法進入報名與執行。"
       />
       <div className="mt-10 grid gap-4 md:grid-cols-4">
         {flowSteps.map(([title, text], index) => (
@@ -383,7 +458,7 @@ function ProviderBoard() {
     <section id="provider-board" className="section-shell">
       <div className="grid gap-8 rounded-[36px] bg-ink-700 p-6 text-white shadow-card sm:p-8 lg:grid-cols-[0.85fr_1.15fr] lg:p-10">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-ice-200">Opportunity board</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-ice-200">接願看板</p>
           <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">主辦端與接願者看到的，不是空泛需求，而是可評估機會。</h2>
           <p className="mt-4 leading-7 text-ice-50/80">
             場地方、教練、裁判、周邊廠商都能看到缺口在哪裡，決定要不要投入資源。
@@ -446,7 +521,7 @@ function WishForm() {
       </p>
       <p className="text-sm font-semibold uppercase tracking-[0.22em] text-coral-600">For wishers</p>
       <h2 className="mt-3 text-3xl font-semibold text-ink-700">開始許願</h2>
-      <p className="mt-3 text-sm leading-6 text-ink-500">留下你的運動願望，VIMO 會用它來測試真實需求、熱度與媒合機會。</p>
+      <p className="mt-3 text-sm leading-6 text-ink-500">留下你的運動願望，讓附近有相同需求的人一起累積熱度。</p>
       <div className="mt-7 grid gap-4 sm:grid-cols-2">
         <Field label="姓名" name="name" placeholder="王小願" required />
         <Field label="Email" name="email" type="email" placeholder="you@example.com" required />
@@ -556,7 +631,7 @@ function FinalCta() {
         </div>
         <h2 className="text-4xl font-semibold tracking-normal text-ink-700">讓願望開始流動</h2>
         <p className="mx-auto mt-4 max-w-2xl leading-7 text-ink-500">
-          這一版更接近 VIMO 的產品樣貌：角色分流、願望熱度、供給媒合與活動成局會在同一個頁面中被理解。
+          從一個人的念頭，到一群人的行動。現在就把你的願望放進池裡，讓它開始被看見、被支持、被承接。
         </p>
         <a className="btn-primary mx-auto mt-8 h-14 w-fit px-8 text-base" href="#wish-form" onClick={() => trackEvent('cta_click', { location: 'final', target: 'wish_form' })}>
           開始許願
@@ -577,7 +652,7 @@ function SuccessPage() {
         <p className="mt-8 text-sm font-semibold uppercase tracking-[0.22em] text-mint-600">Received</p>
         <h1 className="mt-3 text-4xl font-semibold text-ink-700">已收到你的回覆</h1>
         <p className="mt-4 leading-7 text-ink-500">
-          謝謝你加入 VIMO 願動的早期測試名單。這份資料會幫助我們判斷哪些願望最值得被推進成下一場活動。
+          謝謝你加入 VIMO 願動。這份願望會進入熱度池，成為推動下一場活動成局的起點。
         </p>
         <a className="btn-primary mx-auto mt-8 h-14 w-fit px-7 text-base" href="/">
           回到首頁
